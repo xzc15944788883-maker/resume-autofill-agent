@@ -16,32 +16,32 @@ After two identical initialization failures, record the error and switch routes.
 
 The bridge uses a separate browser profile and never copies the user's main browser profile, cookies, tokens, or saved passwords. A blank browser that asks for login on first launch is therefore expected; it does not mean the user's normal Google session was lost.
 
-Chrome is preferred by default. Reusable login state lives at `~/.resume-autofill-agent/native-cdp-chrome`; Edge uses `~/.resume-autofill-agent/native-cdp-edge`. Direct Playwright launch and native CDP launch must use the same directory. Alternating between an old `browser-profile` directory and `native-cdp-chrome` creates two unrelated sessions and looks like a logout. After the first login, every later task and skill reinstall must reuse the same path; the skill must never delete it.
+Chrome is preferred by default. The resolver stores the last successful isolated profile choice at `~/.resume-autofill-agent/browser-state.json`, outside the skill installation. Direct Playwright launch and native CDP launch use that remembered path. On upgrade it also detects known `student-resume-autofill` and `browser-profile` directories. If several initialized profiles exist, it reports `PROFILE_CONFLICT`; if an old shared directory cannot be attributed safely to Chrome or Edge, it reports `AMBIGUOUS_LEGACY_PROFILE`. Both errors refuse to open a browser rather than guessing and appearing to log the user out. The skill must never delete the state file or selected profile.
 
 From `scripts/browser-bridge`:
 
 ```bash
 npm install --ignore-scripts
 node browser_bridge.cjs --doctor --browser chrome
-node browser_bridge.cjs --browser chrome --profile "$HOME/.resume-autofill-agent/native-cdp-chrome" --url "https://example.com/application"
+node browser_bridge.cjs --browser chrome --url "https://example.com/application"
 ```
 
 If the host already bundles `playwright` or `playwright-core`, the bridge tries that first and may not require installation. `--doctor` reports dependency and browser detection without opening a page.
 
-Honor the user's browser preference. Use `--browser chrome` or `--browser edge`, pass `--executable "/path/to/chrome"` to select an installation, and keep `--profile "/path/to/isolated-profile"` stable. Run `--doctor` before launch and record its `browser` and `profile`; if a later connection reports a different path, reconnect with the already-authenticated path instead of asking the user to log in again. Never point `--profile` at the everyday Chrome or Edge profile because concurrent browser locking can fail or corrupt it. If an identity-provider login fails in one browser, switch to the user's preferred installed browser instead of retrying the same route.
+Honor the user's browser preference. Use `--browser chrome` or `--browser edge`, and pass `--executable "/path/to/chrome"` to select an installation. Run `--doctor` before launch and inspect `profile`, `profileSource`, and `profileState`. A successful launch remembers the choice automatically. To repair a conflict, launch once with `--profile "/path/to/the/existing-isolated-profile"`; this pins that path for later launches. Never point `--profile` at the everyday Chrome or Edge profile—the resolver rejects it because concurrent browser locking can fail or corrupt it. If an identity-provider login fails in one browser, switch to the user's preferred installed browser instead of retrying the same route.
 
 The bridge removes Playwright's default `--enable-automation` launch flag because some identity providers reject browsers that expose that marker. This improves compatibility but does not bypass CAPTCHA, MFA, risk checks, or access controls.
 
 If that is still rejected, do not retry. Launch the browser natively with an isolated profile and a fixed loopback debugging port, complete login before attaching, then run:
 
 ```bash
-node native_cdp_launcher.cjs --doctor --browser chrome --port 9333 --profile "$HOME/.resume-autofill-agent/native-cdp-chrome"
-node native_cdp_launcher.cjs --browser chrome --port 9333 --profile "$HOME/.resume-autofill-agent/native-cdp-chrome" --url "https://example.com/application"
+node native_cdp_launcher.cjs --doctor --browser chrome --port 9333
+node native_cdp_launcher.cjs --browser chrome --port 9333 --url "https://example.com/application"
 # Complete login, CAPTCHA, passkey, or MFA in the opened browser first.
 node browser_bridge.cjs --cdp "http://127.0.0.1:9333"
 ```
 
-Bind the debugging port to loopback only, verify the port is unused first, and never expose it to the network. The bridge refuses non-loopback CDP endpoints. Disconnecting from CDP leaves the native browser open so its isolated login state can be reused.
+Bind the debugging port to loopback only and never expose it to the network. The native launcher reuses an occupied port only when its browser profile and port match the remembered state; otherwise it fails with `UNVERIFIED_CDP_ENDPOINT`. When repairing an older running browser, attach once with both `--cdp` and its isolated `--profile` path to remember that identity. Disconnecting from CDP leaves the native browser open so its isolated login state can be reused.
 
 Read stdout until `@@RESUMEFILL@@{"ready":true,...}` appears. Keep the process alive and send one JSON object per stdin line. Parse only lines beginning with `@@RESUMEFILL@@` as protocol responses.
 
@@ -65,7 +65,7 @@ Use `selector` only when stable visible labels, placeholders, or roles are unava
 ## Operating sequence
 
 1. Open the exact application URL and verify the title/domain.
-2. Verify that the reported browser and isolated profile path match the previous session; require login only when the profile is being created for the first time. Allow the user to complete login, CAPTCHA, passkey, or MFA in the isolated window. Never request or store those secrets.
+2. Run `--doctor` and verify `profileSource`. Reuse `remembered`; repair `PROFILE_CONFLICT` or `AMBIGUOUS_LEGACY_PROFILE` with the known isolated path. Treat `canonical-new` as first-time login. If the target page proves that a remembered session has expired, keep the same profile while the user restores it. Allow the user to complete login, CAPTCHA, passkey, or MFA in the isolated window. Never request or store those secrets.
 3. Snapshot visible controls and map them to the source ledger.
 4. If resume parsing can overwrite fields, upload the resume first and wait for parsing.
 5. Fill one logical section at a time. Read back identity, dates, education, and repeated entries.

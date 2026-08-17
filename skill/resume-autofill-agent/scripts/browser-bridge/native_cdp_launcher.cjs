@@ -1,8 +1,13 @@
 const fs = require('node:fs');
 const http = require('node:http');
-const os = require('node:os');
-const path = require('node:path');
 const { spawn } = require('node:child_process');
+const {
+  ProfileResolutionError,
+  normalizeBrowserName,
+  rememberedProfile,
+  rememberProfile,
+  resolveProfile
+} = require('./profile_resolver.cjs');
 
 const MARKER = '@@RESUMEFILL_LAUNCH@@';
 const args = process.argv.slice(2);
@@ -12,6 +17,14 @@ const arg = (name, fallback = '') => {
 };
 const has = (name) => args.includes(name);
 const emit = (value) => process.stdout.write(`${MARKER}${JSON.stringify(value)}\n`);
+
+function explicitProfile() {
+  return arg('--profile') || process.env.RESUME_AUTOFILL_BROWSER_PROFILE || process.env.STUDENT_RESUME_BROWSER_PROFILE;
+}
+
+function profileError(error) {
+  return { code: error?.code || 'PROFILE_RESOLUTION_FAILED', message: error?.message || String(error), details: error?.details || {} };
+}
 
 function candidates(preference) {
   const custom = arg('--executable');
@@ -72,19 +85,42 @@ async function waitForEndpoint(port, timeoutMs = 15000) {
   const port = Number(arg('--port', '9333'));
   if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error('Use a TCP port between 1024 and 65535.');
   if (!executable) throw new Error('No supported Chrome or Edge executable found. Use --executable PATH.');
-  const profile = path.resolve(arg('--profile') || process.env.RESUME_AUTOFILL_BROWSER_PROFILE || process.env.STUDENT_RESUME_BROWSER_PROFILE || path.join(os.homedir(), '.resume-autofill-agent', `native-cdp-${arg('--browser', 'chrome')}`));
+  const browserName = normalizeBrowserName(arg('--browser', 'chrome'), executable);
+  let profileSelection;
+  try {
+    profileSelection = resolveProfile({ browserName, executablePath: executable, explicitProfile: explicitProfile() });
+  } catch (error) {
+    if (has('--doctor')) {
+      emit({ doctor: true, executable, browserName, port, endpoint: `http://127.0.0.1:${port}`, profileError: profileError(error) });
+      process.exit(2);
+    }
+    throw error;
+  }
+  const profile = profileSelection.path;
   const url = safeUrl(arg('--url', 'https://example.com'));
   if (has('--doctor')) {
-    emit({ doctor: true, executable, profile, port, endpoint: `http://127.0.0.1:${port}` });
+    emit({ doctor: true, executable, browserName, profile, profileSource: profileSelection.source, profileState: profileSelection.stateFile, profileCandidates: profileSelection.candidates || [], port, endpoint: `http://127.0.0.1:${port}` });
     return;
   }
 
+  let existing = null;
   try {
-    const existing = await getJson(port);
-    const target = await getJson(port, `/json/new?${encodeURIComponent(url)}`, 'PUT').catch(() => null);
-    emit({ ready: true, reused: true, executable, profile: null, port, endpoint: `http://127.0.0.1:${port}`, browser: existing.Browser || null, targetId: target?.id || null });
-    return;
+    existing = await getJson(port);
   } catch {}
+  if (existing) {
+    const pinned = rememberedProfile({ browserName, executablePath: executable });
+    const verified = pinned && pinned.path === profile && pinned.record.cdpPort === port;
+    if (!verified) {
+      throw new ProfileResolutionError(
+        'UNVERIFIED_CDP_ENDPOINT',
+        `CDP port ${port} is already active but is not recorded for ${profile}. Refusing to reuse an unknown browser profile. Attach explicitly with browser_bridge.cjs --cdp http://127.0.0.1:${port} --profile PATH or close that browser first.`,
+        { port, profile, rememberedProfile: pinned?.path || null, rememberedPort: pinned?.record?.cdpPort || null }
+      );
+    }
+    const target = await getJson(port, `/json/new?${encodeURIComponent(url)}`, 'PUT').catch(() => null);
+    emit({ ready: true, reused: true, profileVerified: true, executable, browserName, profile, profileSource: pinned.source, profileState: pinned.stateFile, port, endpoint: `http://127.0.0.1:${port}`, browser: existing.Browser || null, targetId: target?.id || null });
+    return;
+  }
 
   fs.mkdirSync(profile, { recursive: true });
   const child = spawn(executable, [
@@ -98,8 +134,9 @@ async function waitForEndpoint(port, timeoutMs = 15000) {
   ], { detached: true, stdio: 'ignore' });
   child.unref();
   const version = await waitForEndpoint(port);
-  emit({ ready: true, reused: false, pid: child.pid, executable, profile, port, endpoint: `http://127.0.0.1:${port}`, browser: version.Browser || null });
+  const remembered = rememberProfile({ browserName, executablePath: executable, profile, mode: 'native-cdp', cdpPort: port });
+  emit({ ready: true, reused: false, pid: child.pid, executable, browserName, profile: remembered.path, profileSource: remembered.source, profileState: remembered.stateFile, port, endpoint: `http://127.0.0.1:${port}`, browser: version.Browser || null });
 })().catch((error) => {
-  emit({ fatal: String(error), stack: error?.stack });
+  emit({ fatal: String(error), code: error?.code || null, details: error?.details || null, stack: error?.stack });
   process.exit(1);
 });

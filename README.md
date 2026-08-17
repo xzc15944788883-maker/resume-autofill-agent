@@ -59,14 +59,14 @@ Clone the repository, then copy the skill package into your Codex skills directo
 ### Windows PowerShell
 
 ```powershell
-git clone https://github.com/xzc15944788883-maker/resume-autofill-agent.git
+git clone https://github.com/CCC-Zach/resume-autofill-agent.git
 Copy-Item -Recurse -Force .\resume-autofill-agent\skill\resume-autofill-agent "$HOME\.codex\skills\resume-autofill-agent"
 ```
 
 ### macOS / Linux
 
 ```bash
-git clone https://github.com/xzc15944788883-maker/resume-autofill-agent.git
+git clone https://github.com/CCC-Zach/resume-autofill-agent.git
 cp -R resume-autofill-agent/skill/resume-autofill-agent ~/.codex/skills/
 ```
 
@@ -102,11 +102,11 @@ Codex 会优先使用已有的原生 browser 或 computer-use 能力。若都不
 ```bash
 cd skill/resume-autofill-agent/scripts/browser-bridge
 npm ci --ignore-scripts
-node browser_bridge.cjs --doctor
-node browser_bridge.cjs --url "https://company.example/application"
+node browser_bridge.cjs --doctor --browser chrome
+node browser_bridge.cjs --browser chrome --url "https://company.example/application"
 ```
 
-The bridge uses installed Edge, Chrome, or Chromium with a separate persistent profile. It never copies the main browser profile or extracts cookies, tokens, or passwords. Login, CAPTCHA, passkeys, and MFA remain user-controlled. / 桥接器使用已安装的 Edge、Chrome 或 Chromium，并创建独立持久配置；不会复制主浏览器资料，也不会提取 Cookie、令牌或密码。登录、验证码、通行密钥及 MFA 始终由用户操作。
+The bridge uses installed Chrome, Edge, or Chromium with a separate persistent profile. It remembers the last successful profile outside the Skill, discovers legacy profile paths during upgrades, and stops on ambiguous profile conflicts instead of opening an empty browser. It never copies the main browser profile or extracts cookies, tokens, or passwords. / 桥接器使用已安装的 Chrome、Edge 或 Chromium，并创建独立持久配置；它会在 Skill 外记忆最后一次成功配置，升级时识别旧目录，存在歧义时停止而不是另开空浏览器。它不会复制主浏览器资料，也不会提取 Cookie、令牌或密码。
 
 Optional overrides are `RESUME_AUTOFILL_BROWSER` for the executable and `RESUME_AUTOFILL_BROWSER_PROFILE` for the isolated profile directory. Legacy `STUDENT_RESUME_BROWSER*` variables remain accepted only for backward compatibility. / 可用 `RESUME_AUTOFILL_BROWSER` 指定浏览器程序，用 `RESUME_AUTOFILL_BROWSER_PROFILE` 指定隔离配置目录；旧版 `STUDENT_RESUME_BROWSER*` 变量仅为兼容保留。
 
@@ -203,6 +203,8 @@ skill/resume-autofill-agent/
     └── browser-bridge/
         ├── browser_bridge.cjs
         ├── native_cdp_launcher.cjs
+        ├── profile_resolver.cjs
+        ├── tests/profile_resolver.test.cjs
         ├── package.json
         └── package-lock.json
 ```

@@ -2,6 +2,13 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const readline = require('node:readline');
+const {
+  ProfileResolutionError,
+  normalizeBrowserName,
+  rememberedProfile,
+  rememberProfile,
+  resolveProfile
+} = require('./profile_resolver.cjs');
 
 const MARKER = '@@RESUMEFILL@@';
 const args = process.argv.slice(2);
@@ -67,11 +74,16 @@ function safeUrl(raw) {
   return parsed.toString();
 }
 
-function profilePath(executablePath = '') {
-  const explicit = arg('--profile') || process.env.RESUME_AUTOFILL_BROWSER_PROFILE || process.env.STUDENT_RESUME_BROWSER_PROFILE;
-  if (explicit) return path.resolve(explicit);
-  const browserName = /edge/i.test(path.basename(executablePath)) ? 'edge' : arg('--browser', 'chrome').toLowerCase() === 'edge' ? 'edge' : 'chrome';
-  return path.join(os.homedir(), '.resume-autofill-agent', `native-cdp-${browserName}`);
+function explicitProfile() {
+  return arg('--profile') || process.env.RESUME_AUTOFILL_BROWSER_PROFILE || process.env.STUDENT_RESUME_BROWSER_PROFILE;
+}
+
+function profileError(error) {
+  return {
+    code: error?.code || 'PROFILE_RESOLUTION_FAILED',
+    message: error?.message || String(error),
+    details: error?.details || {}
+  };
 }
 
 function locatorFor(page, request, clickMode = false) {
@@ -139,8 +151,36 @@ function looksIrreversible(text) {
   }
   const executablePath = detectBrowser();
   const cdpEndpoint = arg('--cdp');
+  let cdpPort = null;
+  if (cdpEndpoint) {
+    const endpoint = new URL(cdpEndpoint);
+    if (!['127.0.0.1', 'localhost', '[::1]'].includes(endpoint.hostname)) throw new Error('For safety, --cdp must use a loopback endpoint.');
+    cdpPort = Number(endpoint.port || 0);
+  }
+  const browserName = normalizeBrowserName(arg('--browser', 'chrome'), executablePath);
+  let profileSelection = null;
+  try {
+    if (has('--doctor') || !cdpEndpoint || explicitProfile()) {
+      profileSelection = resolveProfile({ browserName, executablePath, explicitProfile: explicitProfile() });
+    } else {
+      profileSelection = rememberedProfile({ browserName, executablePath });
+      if (profileSelection && profileSelection.record.cdpPort !== cdpPort) {
+        throw new ProfileResolutionError(
+          'UNVERIFIED_CDP_ENDPOINT',
+          `CDP endpoint port ${cdpPort || 'unknown'} does not match the remembered port ${profileSelection.record.cdpPort || 'none'} for ${profileSelection.path}. Pass --profile PATH only after verifying the running browser identity.`,
+          { cdpPort, profile: profileSelection.path, rememberedPort: profileSelection.record.cdpPort }
+        );
+      }
+    }
+  } catch (error) {
+    if (has('--doctor')) {
+      emit({ doctor: true, playwright: true, playwrightSource: dependency.source, browser: executablePath || null, cdpEndpoint: cdpEndpoint || null, profileError: profileError(error) });
+      process.exit(2);
+    }
+    throw error;
+  }
   if (has('--doctor')) {
-    emit({ doctor: true, playwright: true, playwrightSource: dependency.source, browser: executablePath || null, profile: profilePath(executablePath), cdpEndpoint: cdpEndpoint || null });
+    emit({ doctor: true, playwright: true, playwrightSource: dependency.source, browser: executablePath || null, browserName, profile: profileSelection.path, profileSource: profileSelection.source, profileState: profileSelection.stateFile, profileCandidates: profileSelection.candidates || [], cdpEndpoint: cdpEndpoint || null });
     process.exit(executablePath || cdpEndpoint ? 0 : 1);
   }
   if (!executablePath && !cdpEndpoint) throw new Error('No supported Edge, Chrome, or Chromium executable was found. Use --executable PATH or --cdp URL.');
@@ -150,18 +190,26 @@ function looksIrreversible(text) {
   let context;
   if (cdpEndpoint) {
     const endpoint = new URL(cdpEndpoint);
-    if (!['127.0.0.1', 'localhost', '[::1]'].includes(endpoint.hostname)) throw new Error('For safety, --cdp must use a loopback endpoint.');
     browser = await dependency.module.chromium.connectOverCDP(endpoint.toString());
     context = browser.contexts()[0];
     if (!context) throw new Error('The CDP browser has no usable context.');
     connectedOverCdp = true;
   } else {
-    context = await dependency.module.chromium.launchPersistentContext(profilePath(executablePath), {
+    context = await dependency.module.chromium.launchPersistentContext(profileSelection.path, {
       executablePath,
       headless: has('--headless'),
       viewport: null,
       ignoreDefaultArgs: ['--enable-automation'],
       args: ['--start-maximized', '--no-first-run', '--no-default-browser-check']
+    });
+  }
+  if (profileSelection) {
+    profileSelection = rememberProfile({
+      browserName,
+      executablePath,
+      profile: profileSelection.path,
+      mode: connectedOverCdp ? 'cdp-attach' : 'persistent',
+      cdpPort: Number.isInteger(cdpPort) && cdpPort > 0 ? cdpPort : null
     });
   }
   let activePage = context.pages()[0] || await context.newPage();
@@ -174,7 +222,7 @@ function looksIrreversible(text) {
       connectedBrowserVersion = browser.version();
     } catch {}
   }
-  emit({ ready: true, mode: connectedOverCdp ? 'cdp' : 'persistent', playwrightSource: dependency.source, browserExecutable: connectedOverCdp ? null : executablePath, browserVersion: connectedBrowserVersion || null, profile: connectedOverCdp ? null : profilePath(executablePath), cdpEndpoint: connectedOverCdp ? cdpEndpoint : null, pages: await Promise.all(context.pages().map(async (page, index) => ({ index, url: page.url(), title: await page.title().catch(() => '') }))) });
+  emit({ ready: true, mode: connectedOverCdp ? 'cdp' : 'persistent', playwrightSource: dependency.source, browserExecutable: connectedOverCdp ? null : executablePath, browserVersion: connectedBrowserVersion || null, browserName, profile: profileSelection?.path || null, profileSource: profileSelection?.source || null, profileState: profileSelection?.stateFile || null, profileWarning: connectedOverCdp && !profileSelection ? 'CDP attached without a remembered profile identity. Reconnect once with --profile PATH to pin the reusable login profile.' : null, cdpEndpoint: connectedOverCdp ? cdpEndpoint : null, pages: await Promise.all(context.pages().map(async (page, index) => ({ index, url: page.url(), title: await page.title().catch(() => '') }))) });
 
   const rl = readline.createInterface({ input: process.stdin, crlfDelay: Infinity });
   rl.on('line', async (line) => {

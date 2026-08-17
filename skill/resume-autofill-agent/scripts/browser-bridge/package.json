@@ -4,6 +4,9 @@
   "private": true,
   "description": "Local browser bridge for the resume-autofill-agent Codex skill",
   "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/*.test.cjs"
+  },
   "dependencies": {
     "playwright-core": "^1.55.0"
   }
