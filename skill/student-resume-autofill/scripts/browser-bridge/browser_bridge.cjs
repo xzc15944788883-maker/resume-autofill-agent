@@ -162,7 +162,13 @@ function looksIrreversible(text) {
   const startUrl = arg('--url');
   if (startUrl) await activePage.goto(safeUrl(startUrl), { waitUntil: 'domcontentloaded', timeout: 60000 });
   await activePage.bringToFront();
-  emit({ ready: true, mode: connectedOverCdp ? 'cdp' : 'persistent', playwrightSource: dependency.source, browser: executablePath, profile: connectedOverCdp ? null : profilePath(), cdpEndpoint: connectedOverCdp ? cdpEndpoint : null, pages: await Promise.all(context.pages().map(async (page, index) => ({ index, url: page.url(), title: await page.title().catch(() => '') }))) });
+  let connectedBrowserVersion = '';
+  if (connectedOverCdp) {
+    try {
+      connectedBrowserVersion = browser.version();
+    } catch {}
+  }
+  emit({ ready: true, mode: connectedOverCdp ? 'cdp' : 'persistent', playwrightSource: dependency.source, browserExecutable: connectedOverCdp ? null : executablePath, browserVersion: connectedBrowserVersion || null, profile: connectedOverCdp ? null : profilePath(), cdpEndpoint: connectedOverCdp ? cdpEndpoint : null, pages: await Promise.all(context.pages().map(async (page, index) => ({ index, url: page.url(), title: await page.title().catch(() => '') }))) });
 
   const rl = readline.createInterface({ input: process.stdin, crlfDelay: Infinity });
   rl.on('line', async (line) => {

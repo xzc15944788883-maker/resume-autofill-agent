@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "mode": "verified_draft",
+  "default_profile": "student-profile.json",
+  "applications": [
+    {
+      "id": "company-role-001",
+      "company": "Example Company",
+      "role": "Example Role",
+      "url": "https://careers.example.invalid/application",
+      "status": "pending",
+      "priority": 1,
+      "resume_variant": "default",
+      "portfolio_items": [],
+      "attempts": 0,
+      "last_checked_at": null,
+      "draft_verified": false,
+      "submission_confirmed": false,
+      "notes": []
+    }
+  ]
+}

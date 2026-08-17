@@ -33,6 +33,9 @@ node browser_bridge.cjs --url "https://example.com/application"
 若仍被拒绝，不要继续重试。使用独立配置和固定的本机调试端口原生启动浏览器，在接管前完成登录，然后运行：
 
 ```bash
+node native_cdp_launcher.cjs --doctor --browser chrome --port 9333
+node native_cdp_launcher.cjs --browser chrome --port 9333 --url "https://example.com/application"
+# 先在打开的浏览器中完成登录、验证码、通行密钥或 MFA。
 node browser_bridge.cjs --cdp "http://127.0.0.1:9333"
 ```
 

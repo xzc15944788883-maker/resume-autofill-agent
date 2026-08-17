@@ -4,3 +4,7 @@ __pycache__/
 Thumbs.db
 *.tmp
 *.log
+node_modules/
+*.zip
+application-queue.json
+student-profile.json

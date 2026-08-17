@@ -1,6 +1,6 @@
 ---
 name: student-resume-autofill
-description: Build a verified student profile from resumes and evidence, prepare portfolio attachments, fill recruitment or school application forms, resolve conflicts, and save drafts without submitting. Use for student resumes, campus recruitment, internships, graduate applications, PDF/DOCX resumes, certificates, videos, archives, repositories, and browser forms. 从简历和证明材料建立可溯源的学生档案，准备作品附件，填写招聘或升学网申，处理信息冲突并只保存草稿；适用于学生简历、校园招聘、实习、研究生申请、PDF/DOCX、证书、视频、压缩包、代码仓库和浏览器表单。
+description: Build a verified student profile from resumes and evidence, prepare portfolio attachments, run multi-site application queues, fill recruitment or school forms through available browser automation, resolve conflicts, and save verified drafts without submitting. Use for student resumes, campus recruitment, internship or graduate applications, batch application preparation, PDF/DOCX resumes, certificates, videos, archives, repositories, and browser forms. 从简历和证明材料建立可溯源的学生档案，准备作品附件，按队列批量处理多家公司网申，通过可用浏览器自动化填写招聘或升学表单，处理信息冲突并保存已核验草稿；适用于学生简历、校园招聘、实习、研究生申请、批量投递准备、PDF/DOCX、证书、视频、压缩包、代码仓库和浏览器表单。
 ---
 
 # Student Resume Autofill / 学生简历自动填写
@@ -13,8 +13,9 @@ description: Build a verified student profile from resumes and evidence, prepare
 4. Ask only about missing, conflicting, sensitive, or blocking fields, with at most three short questions at once. / 只询问缺失、冲突、敏感或阻塞字段，每次最多三个简短问题。
 5. Improve wording only from verified evidence and target-role relevance. / 只依据已核验材料和岗位相关性优化表达。
 6. Select and prepare the smallest relevant portfolio set. / 选择并准备最精简、最相关的作品附件。
-7. Select a browser-control route, then upload the resume before manual filling when parsing may overwrite fields. / 选择浏览器控制方案；若网站会解析并覆盖字段，先上传简历，再手动填写和复核。
-8. Read back critical fields and save a verified draft. Never submit, sign, consent, or make an irreversible declaration without explicit confirmation immediately before the action. / 回读关键字段并保存已核验草稿；未经操作前的明确确认，不得提交、签署、同意或作出不可逆声明。
+7. For multiple application URLs, initialize an application queue and process one company-role pair at a time. / 多个申请链接时，初始化投递队列，按“公司—岗位”逐个处理。
+8. Select a browser-control route, then upload the resume before manual filling when parsing may overwrite fields. / 选择浏览器控制方案；若网站会解析并覆盖字段，先上传简历，再手动填写和复核。
+9. Read back critical fields and save a verified draft. Never submit, sign, consent, or make an irreversible declaration without explicit confirmation immediately before the action. / 回读关键字段并保存已核验草稿；未经操作前的明确确认，不得提交、签署、同意或作出不可逆声明。
 
 Read the detailed intake guide in the user's preferred language: [English](references/intake-and-profile.md) | [中文](references/intake-and-profile.zh-CN.md).
 
@@ -58,6 +59,8 @@ Use the host's native browser or computer-use capability first. If it is absent 
 
 Read the browser guide before operating a live form: [English](references/browser-control.md) | [中文](references/browser-control.zh-CN.md). The bridge supports page inspection, navigation, form filling, dropdowns, keyboard input, uploads, screenshots, and guarded clicks. / 操作真实表单前读取浏览器指南：[English](references/browser-control.md) | [中文](references/browser-control.zh-CN.md)。桥接器支持页面检查、导航、填写、下拉选择、键盘输入、上传、截图及带保护的点击。
 
+For Codex Computer Use, Tencent WorkBuddy, or another host adapter, read [platform-adapters.md](references/platform-adapters.md). For several job URLs, read [batch-application.md](references/batch-application.md) and start from [application-queue-template.json](assets/application-queue-template.json). / 使用 Codex Computer Use、腾讯 WorkBuddy 或其他宿主适配器时，读取 [platform-adapters.md](references/platform-adapters.md)；处理多个岗位链接时，读取 [batch-application.md](references/batch-application.md)，并从 [application-queue-template.json](assets/application-queue-template.json) 开始。
+
 ## Privacy and memory / 隐私与记忆
 
 - Never place real private data in this skill, examples, tests, or templates. / 不得把真实隐私数据写入本 Skill、示例、测试或模板。
@@ -81,3 +84,8 @@ Report sources used, fields completed, attachment choices, unresolved conflicts,
 - English browser guide: [browser-control.md](references/browser-control.md)
 - 中文浏览器指南：[browser-control.zh-CN.md](references/browser-control.zh-CN.md)
 - Browser bridge / 浏览器桥接器：[browser_bridge.cjs](scripts/browser-bridge/browser_bridge.cjs)
+- Native CDP launcher / 原生浏览器启动器：[native_cdp_launcher.cjs](scripts/browser-bridge/native_cdp_launcher.cjs)
+- Platform adapters / 平台适配：[platform-adapters.md](references/platform-adapters.md)
+- Batch workflow / 批量流程：[batch-application.md](references/batch-application.md)
+- Application queue / 投递队列：[application-queue-template.json](assets/application-queue-template.json)
+- Skill packager / Skill 打包器：[package_skill.py](scripts/package_skill.py)

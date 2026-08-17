@@ -33,6 +33,9 @@ The bridge removes Playwright's default `--enable-automation` launch flag becaus
 If that is still rejected, do not retry. Launch the browser natively with an isolated profile and a fixed loopback debugging port, complete login before attaching, then run:
 
 ```bash
+node native_cdp_launcher.cjs --doctor --browser chrome --port 9333
+node native_cdp_launcher.cjs --browser chrome --port 9333 --url "https://example.com/application"
+# Complete login, CAPTCHA, passkey, or MFA in the opened browser first.
 node browser_bridge.cjs --cdp "http://127.0.0.1:9333"
 ```
 
