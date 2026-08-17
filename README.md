@@ -25,14 +25,14 @@ Clone the repository, then copy the skill package into your Codex skills directo
 ### Windows PowerShell
 
 ```powershell
-git clone https://github.com/YOUR_GITHUB_ACCOUNT/student-resume-autofill-skill.git
+git clone https://github.com/xzc15944788883-maker/student-resume-autofill-skill.git
 Copy-Item -Recurse -Force .\student-resume-autofill-skill\skill\student-resume-autofill "$HOME\.codex\skills\student-resume-autofill"
 ```
 
 ### macOS / Linux
 
 ```bash
-git clone https://github.com/YOUR_GITHUB_ACCOUNT/student-resume-autofill-skill.git
+git clone https://github.com/xzc15944788883-maker/student-resume-autofill-skill.git
 cp -R student-resume-autofill-skill/skill/student-resume-autofill ~/.codex/skills/
 ```
 
