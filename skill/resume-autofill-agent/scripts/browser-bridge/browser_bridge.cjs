@@ -35,23 +35,26 @@ function loadPlaywright() {
 
 function browserCandidates() {
   const custom = arg('--executable') || process.env.RESUME_AUTOFILL_BROWSER || process.env.STUDENT_RESUME_BROWSER;
-  const candidates = custom ? [custom] : [];
+  if (custom) return [custom];
+  const chrome = [];
+  const edge = [];
   if (process.platform === 'win32') {
-    candidates.push(
-      'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
-      'C:/Program Files/Microsoft/Edge/Application/msedge.exe',
+    chrome.push(
       'C:/Program Files/Google/Chrome/Application/chrome.exe',
       'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
     );
-  } else if (process.platform === 'darwin') {
-    candidates.push(
-      '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
-      '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    edge.push(
+      'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
+      'C:/Program Files/Microsoft/Edge/Application/msedge.exe'
     );
+  } else if (process.platform === 'darwin') {
+    chrome.push('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome');
+    edge.push('/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge');
   } else {
-    candidates.push('/usr/bin/microsoft-edge', '/usr/bin/microsoft-edge-stable', '/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/chromium-browser');
+    chrome.push('/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/chromium-browser');
+    edge.push('/usr/bin/microsoft-edge', '/usr/bin/microsoft-edge-stable');
   }
-  return [...new Set(candidates)].filter(Boolean);
+  return arg('--browser', 'chrome').toLowerCase() === 'edge' ? [...edge, ...chrome] : [...chrome, ...edge];
 }
 
 function detectBrowser() {
@@ -64,8 +67,11 @@ function safeUrl(raw) {
   return parsed.toString();
 }
 
-function profilePath() {
-  return path.resolve(arg('--profile') || process.env.RESUME_AUTOFILL_BROWSER_PROFILE || process.env.STUDENT_RESUME_BROWSER_PROFILE || path.join(os.homedir(), '.resume-autofill-agent', 'browser-profile'));
+function profilePath(executablePath = '') {
+  const explicit = arg('--profile') || process.env.RESUME_AUTOFILL_BROWSER_PROFILE || process.env.STUDENT_RESUME_BROWSER_PROFILE;
+  if (explicit) return path.resolve(explicit);
+  const browserName = /edge/i.test(path.basename(executablePath)) ? 'edge' : arg('--browser', 'chrome').toLowerCase() === 'edge' ? 'edge' : 'chrome';
+  return path.join(os.homedir(), '.resume-autofill-agent', `native-cdp-${browserName}`);
 }
 
 function locatorFor(page, request, clickMode = false) {
@@ -134,7 +140,7 @@ function looksIrreversible(text) {
   const executablePath = detectBrowser();
   const cdpEndpoint = arg('--cdp');
   if (has('--doctor')) {
-    emit({ doctor: true, playwright: true, playwrightSource: dependency.source, browser: executablePath || null, profile: profilePath(), cdpEndpoint: cdpEndpoint || null });
+    emit({ doctor: true, playwright: true, playwrightSource: dependency.source, browser: executablePath || null, profile: profilePath(executablePath), cdpEndpoint: cdpEndpoint || null });
     process.exit(executablePath || cdpEndpoint ? 0 : 1);
   }
   if (!executablePath && !cdpEndpoint) throw new Error('No supported Edge, Chrome, or Chromium executable was found. Use --executable PATH or --cdp URL.');
@@ -150,7 +156,7 @@ function looksIrreversible(text) {
     if (!context) throw new Error('The CDP browser has no usable context.');
     connectedOverCdp = true;
   } else {
-    context = await dependency.module.chromium.launchPersistentContext(profilePath(), {
+    context = await dependency.module.chromium.launchPersistentContext(profilePath(executablePath), {
       executablePath,
       headless: has('--headless'),
       viewport: null,
@@ -168,7 +174,7 @@ function looksIrreversible(text) {
       connectedBrowserVersion = browser.version();
     } catch {}
   }
-  emit({ ready: true, mode: connectedOverCdp ? 'cdp' : 'persistent', playwrightSource: dependency.source, browserExecutable: connectedOverCdp ? null : executablePath, browserVersion: connectedBrowserVersion || null, profile: connectedOverCdp ? null : profilePath(), cdpEndpoint: connectedOverCdp ? cdpEndpoint : null, pages: await Promise.all(context.pages().map(async (page, index) => ({ index, url: page.url(), title: await page.title().catch(() => '') }))) });
+  emit({ ready: true, mode: connectedOverCdp ? 'cdp' : 'persistent', playwrightSource: dependency.source, browserExecutable: connectedOverCdp ? null : executablePath, browserVersion: connectedBrowserVersion || null, profile: connectedOverCdp ? null : profilePath(executablePath), cdpEndpoint: connectedOverCdp ? cdpEndpoint : null, pages: await Promise.all(context.pages().map(async (page, index) => ({ index, url: page.url(), title: await page.title().catch(() => '') }))) });
 
   const rl = readline.createInterface({ input: process.stdin, crlfDelay: Infinity });
   rl.on('line', async (line) => {

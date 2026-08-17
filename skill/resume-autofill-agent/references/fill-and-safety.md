@@ -52,6 +52,8 @@ Do not attach family documents, transcripts, IDs, raw chat exports, credentials,
 For education, experience, projects, awards, and family entries:
 
 - determine count and ordering first;
+- order dated education, work, internship, project, award, and publication entries reverse chronologically by end date, then start date, unless the form explicitly requires another order;
+- treat parser order as untrusted and verify the final visible order;
 - add one entry at a time;
 - save or confirm each repeated block when possible;
 - re-read all blocks after additions because indexes may shift;
@@ -68,6 +70,8 @@ Follow [browser-control.md](browser-control.md) to select and initialize an avai
 - do not refresh merely to check whether a value saved.
 
 When all direct-control routes are unavailable, produce a field-by-field fill sheet and ask the user only for the minimal manual clicks or missing sensitive values. Do not claim that a browser extension is working merely because it is installed or enabled; verify it with a successful page-list or snapshot operation.
+
+When an interaction fails, first inspect the live page and error state, keep completed entries intact, and try a bounded sequence of safe alternatives such as a more specific locator, keyboard interaction, a verified fallback adapter, or a site-compatible helper. Re-read the affected field after every unusual interaction. Ask the user only when the remaining problem requires unavailable evidence, a consequential choice, credentials or verification, or unavoidable manual action.
 
 ## Repository Claims
 

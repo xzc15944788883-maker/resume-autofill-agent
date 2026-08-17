@@ -13,9 +13,11 @@ description: Build a verified candidate profile from resumes and evidence, prepa
 4. Ask only about missing, conflicting, sensitive, or blocking fields, with at most three short questions at once. / 只询问缺失、冲突、敏感或阻塞字段，每次最多三个简短问题。
 5. Improve wording only from verified evidence and target-role relevance. / 只依据已核验材料和岗位相关性优化表达。
 6. Select and prepare the smallest relevant portfolio set. / 选择并准备最精简、最相关的作品附件。
-7. For multiple application URLs, initialize an application queue and process one company-role pair at a time. / 多个申请链接时，初始化投递队列，按“公司—岗位”逐个处理。
-8. Select a browser-control route, then upload the resume before manual filling when parsing may overwrite fields. / 选择浏览器控制方案；若网站会解析并覆盖字段，先上传简历，再手动填写和复核。
-9. Read back critical fields and save a verified draft. Never submit, sign, consent, or make an irreversible declaration without explicit confirmation immediately before the action. / 回读关键字段并保存已核验草稿；未经操作前的明确确认，不得提交、签署、同意或作出不可逆声明。
+7. Normalize repeated education, work, internship, project, award, and publication sections to reverse chronological order (latest end date first) unless the form explicitly requires another order. Do not trust parser order. / 除非表单明确要求其他顺序，否则教育、工作、实习、项目、奖项和论文等重复模块统一按结束日期从近到远倒序排列；不得直接信任简历解析顺序。
+8. For multiple application URLs, initialize an application queue and process one company-role pair at a time. / 多个申请链接时，初始化投递队列，按“公司—岗位”逐个处理。
+9. Select a browser-control route, then upload the resume before manual filling when parsing may overwrite fields. / 选择浏览器控制方案；若网站会解析并覆盖字段，先上传简历，再手动填写和复核。
+10. When an operation fails, inspect the current state, preserve completed work, try bounded safe alternatives, and verify the result. Ask the user only when evidence is still missing, ambiguity affects correctness, or user action is unavoidable. / 操作失败时先检查当前状态并保留已完成内容，再尝试有限次安全替代方案并核验结果；仅在证据仍缺失、歧义影响正确性或必须由用户操作时才询问。
+11. Read back critical fields and save a verified draft. Never submit, sign, consent, or make an irreversible declaration without explicit confirmation immediately before the action. / 回读关键字段并保存已核验草稿；未经操作前的明确确认，不得提交、签署、同意或作出不可逆声明。
 
 Read the detailed intake guide in the user's preferred language: [English](references/intake-and-profile.md) | [中文](references/intake-and-profile.zh-CN.md).
 

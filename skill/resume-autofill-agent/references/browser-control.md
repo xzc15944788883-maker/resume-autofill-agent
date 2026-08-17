@@ -14,27 +14,29 @@ After two identical initialization failures, record the error and switch routes.
 
 ## Playwright bridge setup
 
-The bridge uses a separate browser profile and never copies the user's main browser profile, cookies, tokens, or saved passwords.
+The bridge uses a separate browser profile and never copies the user's main browser profile, cookies, tokens, or saved passwords. A blank browser that asks for login on first launch is therefore expected; it does not mean the user's normal Google session was lost.
+
+Chrome is preferred by default. Reusable login state lives at `~/.resume-autofill-agent/native-cdp-chrome`; Edge uses `~/.resume-autofill-agent/native-cdp-edge`. Direct Playwright launch and native CDP launch must use the same directory. Alternating between an old `browser-profile` directory and `native-cdp-chrome` creates two unrelated sessions and looks like a logout. After the first login, every later task and skill reinstall must reuse the same path; the skill must never delete it.
 
 From `scripts/browser-bridge`:
 
 ```bash
 npm install --ignore-scripts
-node browser_bridge.cjs --doctor
-node browser_bridge.cjs --url "https://example.com/application"
+node browser_bridge.cjs --doctor --browser chrome
+node browser_bridge.cjs --browser chrome --profile "$HOME/.resume-autofill-agent/native-cdp-chrome" --url "https://example.com/application"
 ```
 
 If the host already bundles `playwright` or `playwright-core`, the bridge tries that first and may not require installation. `--doctor` reports dependency and browser detection without opening a page.
 
-Honor the user's browser preference. Pass `--executable "/path/to/chrome"` to force Chrome or another supported Chromium browser, and `--profile "/path/to/isolated-profile"` to keep its reusable login state separate. If an identity-provider login fails in one browser, switch to the user's preferred installed browser instead of retrying the same route.
+Honor the user's browser preference. Use `--browser chrome` or `--browser edge`, pass `--executable "/path/to/chrome"` to select an installation, and keep `--profile "/path/to/isolated-profile"` stable. Run `--doctor` before launch and record its `browser` and `profile`; if a later connection reports a different path, reconnect with the already-authenticated path instead of asking the user to log in again. Never point `--profile` at the everyday Chrome or Edge profile because concurrent browser locking can fail or corrupt it. If an identity-provider login fails in one browser, switch to the user's preferred installed browser instead of retrying the same route.
 
 The bridge removes Playwright's default `--enable-automation` launch flag because some identity providers reject browsers that expose that marker. This improves compatibility but does not bypass CAPTCHA, MFA, risk checks, or access controls.
 
 If that is still rejected, do not retry. Launch the browser natively with an isolated profile and a fixed loopback debugging port, complete login before attaching, then run:
 
 ```bash
-node native_cdp_launcher.cjs --doctor --browser chrome --port 9333
-node native_cdp_launcher.cjs --browser chrome --port 9333 --url "https://example.com/application"
+node native_cdp_launcher.cjs --doctor --browser chrome --port 9333 --profile "$HOME/.resume-autofill-agent/native-cdp-chrome"
+node native_cdp_launcher.cjs --browser chrome --port 9333 --profile "$HOME/.resume-autofill-agent/native-cdp-chrome" --url "https://example.com/application"
 # Complete login, CAPTCHA, passkey, or MFA in the opened browser first.
 node browser_bridge.cjs --cdp "http://127.0.0.1:9333"
 ```
@@ -63,7 +65,7 @@ Use `selector` only when stable visible labels, placeholders, or roles are unava
 ## Operating sequence
 
 1. Open the exact application URL and verify the title/domain.
-2. Allow the user to complete login, CAPTCHA, passkey, or MFA in the isolated window. Never request or store those secrets.
+2. Verify that the reported browser and isolated profile path match the previous session; require login only when the profile is being created for the first time. Allow the user to complete login, CAPTCHA, passkey, or MFA in the isolated window. Never request or store those secrets.
 3. Snapshot visible controls and map them to the source ledger.
 4. If resume parsing can overwrite fields, upload the resume first and wait for parsing.
 5. Fill one logical section at a time. Read back identity, dates, education, and repeated entries.
