@@ -1,33 +1,27 @@
-# Student Resume Autofill / 学生网申自动驾驶
+# Resume Autofill Agent / 简历自动填写 Agent
 
 [![MIT License](https://img.shields.io/badge/license-MIT-22c55e.svg)](LICENSE)
 ![Bilingual](https://img.shields.io/badge/中文%20%2B%20English-ready-2563eb)
 ![Human in the loop](https://img.shields.io/badge/final%20submit-human%20confirmed-f97316)
 
-> One verified profile. Every application portal. 99% automated, 1% final decision.
+> A bilingual agent for organizing verified candidate information and filling online application forms.
 >
-> 一份可信档案，填遍不同招聘官网。99% 自动执行，1% 留给你的最终决定。
+> 整理可复用的个人信息，并协助填写不同招聘网站的简历表单。
 
-投一家，手填二十分钟；投三十家，可能把一整周浪费在复制粘贴上。更麻烦的是，很多公司官网的简历解析并不好用：日期读错、教育经历重复、项目字段错位、上传简历后覆盖手填内容，作品附件还各有格式和大小限制。
+Many recruitment websites do not parse uploaded resumes reliably. Dates may be wrong, education entries may be duplicated, project fields may be misplaced, and uploading a resume may overwrite information entered earlier.
 
-Student Resume Autofill turns resumes, certificates, projects, videos, and repository evidence into one reusable verified profile. Give it one application URL or a queue of roles, and it selects the right evidence, adapts wording without inventing facts, uploads the resume in the safe order, repairs parser mistakes, fills the form, checks critical fields, and saves a verified draft.
+Resume Autofill Agent organizes resumes, certificates, projects, videos, and repository evidence into one reusable verified profile. It can process one application or a list of roles, select relevant materials, adapt wording without inventing facts, upload the resume in a safe order, correct parsing mistakes, fill form fields, check critical information, and save a reviewed draft.
 
-Student Resume Autofill 把简历、证书、项目、视频和代码仓库整理成一份可复用、可溯源的个人档案。给它一个官网链接或一组岗位队列，它会自动选择岗位相关材料、在不编造事实的前提下调整表达、按正确顺序上传简历、修复解析错误、填写表单、核验关键字段并保存草稿。
+简历自动填写 Agent 会把简历、证书、项目、视频和代码仓库整理成一份可复用、可溯源的个人资料。它可以处理单个网申或岗位列表，选择相关材料，在不编造事实的前提下调整表达，按安全顺序上传简历，修复解析错误，填写并核验表单，最后保存草稿。
 
-**把“海投”从重复劳动，变成一条可检查、可恢复、可继续的自动化流水线。**
-
-> 它不是“帮你润色两句话”的普通简历工具，而是一名会读材料、会挑作品、会修复官网解析、会接管浏览器、还知道什么时候必须停下来问你的网申执行 Agent。
->
-> Not another resume rewriter: this is an application agent that reads evidence, selects work samples, repairs broken parsing, controls the browser, and knows when it must stop for you.
-
-### 一个链接，它帮你填；三十个链接，它替你排队跑 / One link or thirty: it keeps the queue moving
+### 常见处理方式 / Typical workflow
 
 - 官网能解析：先上传，再逐项核验解析结果。 / If parsing works, upload first and verify every result.
-- 官网解析稀烂：绕过错误映射，按已核验档案重新填写。 / If parsing fails, rebuild the form from the verified profile.
+- 官网解析错误：根据已核验资料修正错误字段。 / If parsing fails, rebuild the form from the verified profile.
 - 不同公司字段不一样：识别标签、下拉框、日期控件和重复经历模块。 / Adapt to labels, selects, date widgets, and repeated sections.
 - 附件限制不一样：自动选择最相关的简历、作品视频、压缩包和仓库链接。 / Match resumes, demo videos, archives, and repository links to each portal.
 - 中途登录、验证码或页面异常：暂停并保留进度，处理后继续。 / Pause for login, CAPTCHA, or page errors without losing queue state.
-- 到最终提交：必须由你确认，避免一键海投变成一键误投。 / Require confirmation at final submit, preventing one-click mistakes.
+- 到最终提交：必须由你确认，避免误提交。 / Require confirmation at final submit to prevent mistakes.
 
 ## What it automates / 它能自动完成什么
 
@@ -45,16 +39,16 @@ Verified draft queue
 Your final confirmation → submit
 ```
 
-## Why people use it / 为什么值得用
+## Core features / 核心功能
 
 - **Resume parser repair / 修复简历解析** — upload first when needed, then restore wrong or overwritten fields.
 - **Multi-site application queue / 多官网批量队列** — process company-role links one by one with resumable status.
 - **Evidence-first writing / 有证据的岗位适配** — rewrite for relevance without inventing employers, metrics, or ownership.
-- **Portfolio autopilot / 作品附件自动选择** — match demo videos, archives, and repository links to the role and file limits.
-- **Reusable student profile / 可复用个人档案** — remember source, confidence, conflicts, and application-only placeholders outside the public Skill.
+- **Portfolio selection / 作品附件选择** — match demo videos, archives, and repository links to the role and file limits.
+- **Reusable candidate profile / 可复用个人资料** — remember source, confidence, conflicts, and application-only placeholders outside the public Skill.
 - **Browser fallback ladder / 多级浏览器控制** — native Browser Use, Computer Use, WorkBuddy `agent-browser`, Playwright, then native Chrome/Edge + CDP.
 - **Draft verification / 草稿核验** — read back identity, dates, education, repeated sections, and displayed filenames.
-- **Human final say / 最终决定在人** — automate everything up to the final submit action, then stop for confirmation.
+- **Submission confirmation / 提交前确认** — complete and review the draft, then stop before the final submit action.
 
 ## Installation / 安装
 

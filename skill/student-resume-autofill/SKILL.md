@@ -1,9 +1,9 @@
 ---
 name: student-resume-autofill
-description: Build a verified student profile from resumes and evidence, prepare portfolio attachments, run multi-site application queues, fill recruitment or school forms through available browser automation, resolve conflicts, and save verified drafts without submitting. Use for student resumes, campus recruitment, internship or graduate applications, batch application preparation, PDF/DOCX resumes, certificates, videos, archives, repositories, and browser forms. 从简历和证明材料建立可溯源的学生档案，准备作品附件，按队列批量处理多家公司网申，通过可用浏览器自动化填写招聘或升学表单，处理信息冲突并保存已核验草稿；适用于学生简历、校园招聘、实习、研究生申请、批量投递准备、PDF/DOCX、证书、视频、压缩包、代码仓库和浏览器表单。
+description: Build a verified candidate profile from resumes and evidence, prepare portfolio attachments, process application queues, fill recruitment or school forms through available browser automation, resolve conflicts, and save reviewed drafts without submitting. Use for resume autofill, online job applications, campus recruitment, internships, graduate applications, PDF/DOCX resumes, certificates, videos, archives, repositories, and browser forms. 从简历和证明材料建立可溯源的求职者资料，准备作品附件，按队列处理网申，通过可用浏览器自动化填写招聘或升学表单，处理信息冲突并保存已核验草稿；适用于简历自动填写、招聘网申、校园招聘、实习、研究生申请、PDF/DOCX、证书、视频、压缩包、代码仓库和浏览器表单。
 ---
 
-# Student Resume Autofill / 学生简历自动填写
+# Resume Autofill Agent / 简历自动填写 Agent
 
 ## Core workflow / 核心流程
 
