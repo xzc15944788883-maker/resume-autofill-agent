@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "mode": "verified_draft",
-  "default_profile": "student-profile.json",
+  "default_profile": "candidate-profile.json",
   "applications": [
     {
       "id": "company-role-001",

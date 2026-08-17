@@ -39,7 +39,7 @@ def build_zip(root: Path, output: Path) -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--skill-dir", type=Path, default=Path(__file__).resolve().parents[1])
-    parser.add_argument("--output", type=Path, default=Path.cwd() / "student-resume-autofill.zip")
+    parser.add_argument("--output", type=Path, default=Path.cwd() / "resume-autofill-agent.zip")
     args = parser.parse_args()
     count = build_zip(args.skill_dir, args.output)
     print(f"Created {args.output.resolve()} with {count} file(s).")

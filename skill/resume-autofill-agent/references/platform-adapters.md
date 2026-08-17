@@ -24,7 +24,7 @@ WorkBuddy can use this workflow, but it is a separate host application and is no
 
 1. Install Tencent WorkBuddy from its official site and sign in. / 从官网下载并登录腾讯 WorkBuddy。
 2. Open Skills, install `agent-browser` from SkillHub, and enable it. / 打开技能页，从 SkillHub 安装并启用 `agent-browser`。
-3. Package the `student-resume-autofill` folder as a ZIP, then choose Skills → Add Skill → Upload Skill. / 将 `student-resume-autofill` 文件夹打包为 ZIP，在“技能 → 添加技能 → 上传技能”中导入。
+3. Package the `resume-autofill-agent` folder as a ZIP, then choose Skills → Add Skill → Upload Skill. / 将 `resume-autofill-agent` 文件夹打包为 ZIP，在“技能 → 添加技能 → 上传技能”中导入。
 4. Create a task, select the folder containing resumes and the authorized profile as the workspace, and enable both skills. / 新建任务，把包含简历和授权档案的文件夹设为工作空间，并启用两个 Skill。
 5. Use Plan mode for the first run; use Craft mode after reviewing the plan. Keep default permissions for real personal data. / 首次使用选 Plan，审核流程后再用 Craft；处理真实个人信息时保持默认权限。
 6. Ask it to build the profile, process the application queue, save verified drafts, and stop before every final submission. / 要求它建立档案、处理投递队列、保存已核验草稿，并在每次最终提交前停止。
@@ -32,9 +32,9 @@ WorkBuddy can use this workflow, but it is a separate host application and is no
 Suggested prompt / 推荐提示词：
 
 ```text
-Use student-resume-autofill and agent-browser. Read the resumes and evidence in this workspace, build a verified profile, process the application URLs in application-queue.json one by one, upload the resume before fields that may be overwritten, save and verify each draft, and stop before every final submission for my confirmation.
+Use resume-autofill-agent and agent-browser. Read the resumes and evidence in this workspace, build a verified profile, process the application URLs in application-queue.json one by one, upload the resume before fields that may be overwritten, save and verify each draft, and stop before every final submission for my confirmation.
 
-使用 student-resume-autofill 和 agent-browser。读取工作空间中的简历与证明，建立已核验档案，逐条处理 application-queue.json 中的岗位链接；可能覆盖字段时先上传简历，保存并核验每份草稿，每次最终提交前停下等待我确认。
+使用 resume-autofill-agent 和 agent-browser。读取工作空间中的简历与证明，建立已核验档案，逐条处理 application-queue.json 中的岗位链接；可能覆盖字段时先上传简历，保存并核验每份草稿，每次最终提交前停下等待我确认。
 ```
 
 Do not put raw profiles, IDs, family information, cookies, passwords, or tokens inside the imported Skill ZIP. / 不得把原始个人档案、证件、家庭信息、Cookie、密码或令牌放入导入的 Skill ZIP。

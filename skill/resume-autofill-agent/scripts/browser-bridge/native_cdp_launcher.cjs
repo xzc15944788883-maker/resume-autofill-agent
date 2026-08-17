@@ -72,7 +72,7 @@ async function waitForEndpoint(port, timeoutMs = 15000) {
   const port = Number(arg('--port', '9333'));
   if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error('Use a TCP port between 1024 and 65535.');
   if (!executable) throw new Error('No supported Chrome or Edge executable found. Use --executable PATH.');
-  const profile = path.resolve(arg('--profile') || path.join(os.homedir(), '.student-resume-autofill', `native-cdp-${arg('--browser', 'chrome')}`));
+  const profile = path.resolve(arg('--profile') || process.env.RESUME_AUTOFILL_BROWSER_PROFILE || process.env.STUDENT_RESUME_BROWSER_PROFILE || path.join(os.homedir(), '.resume-autofill-agent', `native-cdp-${arg('--browser', 'chrome')}`));
   const url = safeUrl(arg('--url', 'https://example.com'));
   if (has('--doctor')) {
     emit({ doctor: true, executable, profile, port, endpoint: `http://127.0.0.1:${port}` });

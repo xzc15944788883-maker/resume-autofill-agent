@@ -59,18 +59,20 @@ Clone the repository, then copy the skill package into your Codex skills directo
 ### Windows PowerShell
 
 ```powershell
-git clone https://github.com/xzc15944788883-maker/student-resume-autofill-skill.git
-Copy-Item -Recurse -Force .\student-resume-autofill-skill\skill\student-resume-autofill "$HOME\.codex\skills\student-resume-autofill"
+git clone https://github.com/xzc15944788883-maker/resume-autofill-agent.git
+Copy-Item -Recurse -Force .\resume-autofill-agent\skill\resume-autofill-agent "$HOME\.codex\skills\resume-autofill-agent"
 ```
 
 ### macOS / Linux
 
 ```bash
-git clone https://github.com/xzc15944788883-maker/student-resume-autofill-skill.git
-cp -R student-resume-autofill-skill/skill/student-resume-autofill ~/.codex/skills/
+git clone https://github.com/xzc15944788883-maker/resume-autofill-agent.git
+cp -R resume-autofill-agent/skill/resume-autofill-agent ~/.codex/skills/
 ```
 
 Restart Codex or open a new task after installation. / 安装后重启 Codex，或新建一个任务。
+
+Upgrading from versions that used `$student-resume-autofill`? Install the new folder and use `$resume-autofill-agent`. The old invocation name may be kept locally as a compatibility alias, but new installations and documentation use only the canonical name. / 从旧版升级时，请安装新目录并改用 `$resume-autofill-agent`。本机可保留旧调用名作为兼容别名，但新安装与文档统一使用正式名称。
 
 ## 60-second quick start / 60 秒开始使用
 
@@ -79,9 +81,9 @@ Restart Codex or open a new task after installation. / 安装后重启 Codex，�
 3. Start a new Codex task and use this prompt: / 新建 Codex 任务并发送：
 
 ```text
-Use $student-resume-autofill. Read the resumes and evidence in this workspace, build a verified reusable profile, process the application URLs one by one, upload the resume before fields that may be overwritten, save and verify every draft, and stop before each final submission.
+Use $resume-autofill-agent. Read the resumes and evidence in this workspace, build a verified reusable profile, process the application URLs one by one, upload the resume before fields that may be overwritten, save and verify every draft, and stop before each final submission.
 
-使用 $student-resume-autofill。读取工作空间中的简历和证明，建立可复用的已核验档案，逐个处理岗位链接；可能覆盖字段时先上传简历，保存并核验每份草稿，每次最终提交前停下等待我确认。
+使用 $resume-autofill-agent。读取工作空间中的简历和证明，建立可复用的已核验档案，逐个处理岗位链接；可能覆盖字段时先上传简历，保存并核验每份草稿，每次最终提交前停下等待我确认。
 ```
 
 4. Complete login, CAPTCHA, passkey, or MFA yourself when requested. / 遇到登录、验证码、通行密钥或 MFA 时由你接管完成。
@@ -98,13 +100,15 @@ Codex will prefer any native browser or computer-use capability already availabl
 Codex 会优先使用已有的原生 browser 或 computer-use 能力。若都不可用，只需为本地桥接器安装一次轻量依赖：
 
 ```bash
-cd skill/student-resume-autofill/scripts/browser-bridge
+cd skill/resume-autofill-agent/scripts/browser-bridge
 npm ci --ignore-scripts
 node browser_bridge.cjs --doctor
 node browser_bridge.cjs --url "https://company.example/application"
 ```
 
 The bridge uses installed Edge, Chrome, or Chromium with a separate persistent profile. It never copies the main browser profile or extracts cookies, tokens, or passwords. Login, CAPTCHA, passkeys, and MFA remain user-controlled. / 桥接器使用已安装的 Edge、Chrome 或 Chromium，并创建独立持久配置；不会复制主浏览器资料，也不会提取 Cookie、令牌或密码。登录、验证码、通行密钥及 MFA 始终由用户操作。
+
+Optional overrides are `RESUME_AUTOFILL_BROWSER` for the executable and `RESUME_AUTOFILL_BROWSER_PROFILE` for the isolated profile directory. Legacy `STUDENT_RESUME_BROWSER*` variables remain accepted only for backward compatibility. / 可用 `RESUME_AUTOFILL_BROWSER` 指定浏览器程序，用 `RESUME_AUTOFILL_BROWSER_PROFILE` 指定隔离配置目录；旧版 `STUDENT_RESUME_BROWSER*` 变量仅为兼容保留。
 
 ### Route B: Google login-safe native Chrome + CDP / 方案 B：原生 Chrome 登录后接管
 
@@ -113,7 +117,7 @@ If Google rejects a Playwright-launched browser as “not secure,” do not keep
 如果 Google 提示“此浏览器或应用可能不安全”，不要反复重试。先原生启动 Chrome 并完成登录，再从本机接管：
 
 ```bash
-cd skill/student-resume-autofill/scripts/browser-bridge
+cd skill/resume-autofill-agent/scripts/browser-bridge
 node native_cdp_launcher.cjs --doctor --browser chrome --port 9333
 node native_cdp_launcher.cjs --browser chrome --port 9333 --url "https://company.example/application"
 # Finish login in the opened Chrome window, then:
@@ -131,38 +135,38 @@ Yes. [Tencent WorkBuddy](https://www.codebuddy.cn/docs/workbuddy/Quickstart) can
 3. Zip the Skill package: / 打包本 Skill：
 
 ```powershell
-python .\skill\student-resume-autofill\scripts\package_skill.py --output .\student-resume-autofill.zip
+python .\skill\resume-autofill-agent\scripts\package_skill.py --output .\resume-autofill-agent.zip
 ```
 
 4. Choose **Skills → Add Skill → Upload Skill**, select the ZIP, and enable it. / 选择“技能 → 添加技能 → 上传技能”，导入 ZIP 并启用。
-5. Create a task, set the resume folder as the workspace, enable both `student-resume-autofill` and `agent-browser`, and use the quick-start prompt above. Start in Plan mode; move to Craft after reviewing the plan. / 新建任务，把简历文件夹设为工作空间，同时启用两个 Skill；首次使用选 Plan，审核流程后再切 Craft。
+5. Create a task, set the resume folder as the workspace, enable both `resume-autofill-agent` and `agent-browser`, and use the quick-start prompt above. Start in Plan mode; move to Craft after reviewing the plan. / 新建任务，把简历文件夹设为工作空间，同时启用两个 Skill；首次使用选 Plan，审核流程后再切 Craft。
 
 WorkBuddy officially supports local Skill-package upload, SkillHub, and an `agent-browser` skill for page opening, reading, scrolling, clicking, screenshots, and form inspection. Keep default permissions for real personal data. / WorkBuddy 官方支持上传本地 Skill 包、SkillHub 和用于网页打开、读取、滚动、点击、截图与表单检查的 `agent-browser`；处理真实个人信息时建议保持默认权限。
 
 ## Example prompts / 使用示例
 
 ```text
-Use $student-resume-autofill to read the resumes in this folder, build a verified profile, and fill the application as a saved draft without submitting.
+Use $resume-autofill-agent to read the resumes in this folder, build a verified profile, and fill the application as a saved draft without submitting.
 
-使用 $student-resume-autofill 读取这个文件夹里的简历，建立可溯源档案，填写网申并保存草稿，不要提交。
+使用 $resume-autofill-agent 读取这个文件夹里的简历，建立可溯源档案，填写网申并保存草稿，不要提交。
 ```
 
 ```text
-Use $student-resume-autofill to select the most relevant demo video and repository for this AI product role, check privacy and file limits, and prepare the application attachments.
+Use $resume-autofill-agent to select the most relevant demo video and repository for this AI product role, check privacy and file limits, and prepare the application attachments.
 
-使用 $student-resume-autofill 为这个 AI 产品岗位选择最相关的演示视频和代码仓库，检查隐私及文件限制，并准备网申附件。
+使用 $resume-autofill-agent 为这个 AI 产品岗位选择最相关的演示视频和代码仓库，检查隐私及文件限制，并准备网申附件。
 ```
 
 ```text
-Use $student-resume-autofill to inspect the open application page, upload my resume first, fill verified fields, and save a draft. If native browser control fails, use the bundled Playwright bridge. Do not submit.
+Use $resume-autofill-agent to inspect the open application page, upload my resume first, fill verified fields, and save a draft. If native browser control fails, use the bundled Playwright bridge. Do not submit.
 
-使用 $student-resume-autofill 检查已打开的网申页面，先上传简历，再填写已核验字段并保存草稿。若原生浏览器控制失败，使用内置 Playwright 桥接器。不要提交。
+使用 $resume-autofill-agent 检查已打开的网申页面，先上传简历，再填写已核验字段并保存草稿。若原生浏览器控制失败，使用内置 Playwright 桥接器。不要提交。
 ```
 
 ```text
-Use $student-resume-autofill to turn these 30 application URLs into a verified draft queue. Skip duplicates and closed roles, adapt only evidence-backed content, and stop before each final submission.
+Use $resume-autofill-agent to turn these 30 application URLs into a verified draft queue. Skip duplicates and closed roles, adapt only evidence-backed content, and stop before each final submission.
 
-使用 $student-resume-autofill 把这 30 个岗位链接处理成已核验草稿队列；跳过重复或已关闭岗位，只做有证据的岗位适配，每次最终投递前停下确认。
+使用 $resume-autofill-agent 把这 30 个岗位链接处理成已核验草稿队列；跳过重复或已关闭岗位，只做有证据的岗位适配，每次最终投递前停下确认。
 ```
 
 ## Safety model / 安全原则
@@ -178,11 +182,11 @@ Real personal information must stay outside the skill directory. The included te
 ## Repository layout / 仓库结构
 
 ```text
-skill/student-resume-autofill/
+skill/resume-autofill-agent/
 ├── SKILL.md
 ├── agents/openai.yaml
 ├── assets/
-│   ├── student-profile-template.json
+│   ├── candidate-profile-template.json
 │   └── application-queue-template.json
 ├── references/
 │   ├── intake-and-profile.md
@@ -206,9 +210,9 @@ skill/student-resume-autofill/
 ## Privacy guard / 隐私工具
 
 ```bash
-python skill/student-resume-autofill/scripts/profile_guard.py init --output profile.json
-python skill/student-resume-autofill/scripts/profile_guard.py sanitize --input private.json --output shared.json
-python skill/student-resume-autofill/scripts/profile_guard.py audit --path skill/student-resume-autofill
+python skill/resume-autofill-agent/scripts/profile_guard.py init --output profile.json
+python skill/resume-autofill-agent/scripts/profile_guard.py sanitize --input private.json --output shared.json
+python skill/resume-autofill-agent/scripts/profile_guard.py audit --path skill/resume-autofill-agent
 ```
 
 ## License / 许可证

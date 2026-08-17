@@ -34,7 +34,7 @@ function loadPlaywright() {
 }
 
 function browserCandidates() {
-  const custom = arg('--executable') || process.env.STUDENT_RESUME_BROWSER;
+  const custom = arg('--executable') || process.env.RESUME_AUTOFILL_BROWSER || process.env.STUDENT_RESUME_BROWSER;
   const candidates = custom ? [custom] : [];
   if (process.platform === 'win32') {
     candidates.push(
@@ -65,7 +65,7 @@ function safeUrl(raw) {
 }
 
 function profilePath() {
-  return path.resolve(arg('--profile') || process.env.STUDENT_RESUME_BROWSER_PROFILE || path.join(os.homedir(), '.student-resume-autofill', 'browser-profile'));
+  return path.resolve(arg('--profile') || process.env.RESUME_AUTOFILL_BROWSER_PROFILE || process.env.STUDENT_RESUME_BROWSER_PROFILE || path.join(os.homedir(), '.resume-autofill-agent', 'browser-profile'));
 }
 
 function locatorFor(page, request, clickMode = false) {

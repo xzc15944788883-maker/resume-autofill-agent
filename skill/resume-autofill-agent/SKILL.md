@@ -1,5 +1,5 @@
 ---
-name: student-resume-autofill
+name: resume-autofill-agent
 description: Build a verified candidate profile from resumes and evidence, prepare portfolio attachments, process application queues, fill recruitment or school forms through available browser automation, resolve conflicts, and save reviewed drafts without submitting. Use for resume autofill, online job applications, campus recruitment, internships, graduate applications, PDF/DOCX resumes, certificates, videos, archives, repositories, and browser forms. 从简历和证明材料建立可溯源的求职者资料，准备作品附件，按队列处理网申，通过可用浏览器自动化填写招聘或升学表单，处理信息冲突并保存已核验草稿；适用于简历自动填写、招聘网申、校园招聘、实习、研究生申请、PDF/DOCX、证书、视频、压缩包、代码仓库和浏览器表单。
 ---
 
@@ -46,7 +46,7 @@ Never invent employers, dates, metrics, awards, authorship, credentials, family 
 - Keep originals unchanged; rename, compress, or transcode only delivery copies. / 原件保持不变；仅对投递副本改名、压缩或转码。
 - Check file type, size, count, metadata, hidden files, and privacy before upload. / 上传前检查类型、大小、数量、元数据、隐藏文件和隐私。
 - Prefer a short representative demo plus a verified repository link when attachments are limited. / 附件受限时，优先短演示视频加已核验仓库链接。
-- Treat account ownership, repository evidence, and the student's own contribution as separate claims. / 区分账号归属、仓库证据和学生本人贡献。
+- Treat account ownership, repository evidence, and the candidate's own contribution as separate claims. / 区分账号归属、仓库证据和候选人本人贡献。
 - Record connector availability only; never store tokens, cookies, or credentials. / 只记录连接是否可用，绝不保存令牌、Cookie 或凭据。
 
 Read the detailed safety guide in the user's preferred language: [English](references/fill-and-safety.md) | [中文](references/fill-and-safety.zh-CN.md).
@@ -79,7 +79,7 @@ Report sources used, fields completed, attachment choices, unresolved conflicts,
 - 中文采集流程：[intake-and-profile.zh-CN.md](references/intake-and-profile.zh-CN.md)
 - English safety guide: [fill-and-safety.md](references/fill-and-safety.md)
 - 中文安全指南：[fill-and-safety.zh-CN.md](references/fill-and-safety.zh-CN.md)
-- Blank profile / 空白档案：[student-profile-template.json](assets/student-profile-template.json)
+- Blank profile / 空白档案：[candidate-profile-template.json](assets/candidate-profile-template.json)
 - Privacy guard / 隐私工具：[profile_guard.py](scripts/profile_guard.py)
 - English browser guide: [browser-control.md](references/browser-control.md)
 - 中文浏览器指南：[browser-control.zh-CN.md](references/browser-control.zh-CN.md)

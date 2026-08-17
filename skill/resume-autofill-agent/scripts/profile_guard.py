@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Initialize, sanitize, and audit student profile files without dependencies."""
+"""Initialize, sanitize, and audit candidate profile files without dependencies."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ from typing import Any
 
 
 TEXT_EXTENSIONS = {".md", ".txt", ".json", ".yaml", ".yml", ".csv", ".tsv", ".py"}
+EXCLUDED_DIRS = {".git", "__pycache__", "node_modules", ".pytest_cache", ".venv"}
 PATTERNS = {
     "chinese_id": re.compile(r"(?<!\d)\d{17}[0-9Xx](?!\d)"),
     "chinese_mobile": re.compile(r"(?<!\d)1[3-9]\d{9}(?!\d)"),
@@ -20,7 +21,7 @@ PATTERNS = {
     "long_number": re.compile(r"(?<!\d)\d{16,19}(?!\d)"),
 }
 SENSITIVE_KEYS = {
-    "name", "姓名", "student_name", "government_id", "id_card", "身份证号", "证件号码",
+    "name", "姓名", "candidate_name", "student_name", "government_id", "id_card", "身份证号", "证件号码",
     "phone", "mobile", "手机号", "email", "邮箱", "address", "通讯地址", "家庭住址",
     "employer", "工作单位",
 }
@@ -51,7 +52,7 @@ def scrub_json(value: Any, key: str | None = None) -> Any:
 
 
 def command_init(output: Path) -> int:
-    template = Path(__file__).resolve().parent.parent / "assets" / "student-profile-template.json"
+    template = Path(__file__).resolve().parent.parent / "assets" / "candidate-profile-template.json"
     output.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(template, output)
     print(f"Initialized blank profile: {output}")
@@ -76,7 +77,7 @@ def iter_text_files(path: Path):
             yield path
         return
     for item in path.rglob("*"):
-        if item.is_file() and item.suffix.lower() in TEXT_EXTENSIONS:
+        if item.is_file() and item.suffix.lower() in TEXT_EXTENSIONS and not any(part in EXCLUDED_DIRS for part in item.relative_to(path).parts):
             yield item
 
 

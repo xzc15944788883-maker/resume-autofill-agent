@@ -1,0 +1,4 @@
+interface:
+  display_name: "Resume Autofill Agent / 简历自动填写 Agent"
+  short_description: "Organize verified information and fill application forms"
+default_prompt: "Use $resume-autofill-agent to organize my verified resume information, prepare relevant attachments, fill the application form, save a reviewed draft, and stop before final submission / 使用 $resume-autofill-agent 整理已核验的简历信息、准备相关附件、填写申请表并保存已检查的草稿，在最终提交前停下。"
