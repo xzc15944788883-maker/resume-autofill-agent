@@ -1,0 +1,10 @@
+{
+  "name": "student-resume-browser-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local browser bridge for the student-resume-autofill Codex skill",
+  "license": "MIT",
+  "dependencies": {
+    "playwright-core": "^1.55.0"
+  }
+}

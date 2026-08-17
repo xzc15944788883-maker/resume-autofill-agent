@@ -1,0 +1,4 @@
+interface:
+  display_name: "Student Resume Autofill / 学生简历自动填写"
+  short_description: "Bilingual, verified resume and application autofill"
+  default_prompt: "Use $student-resume-autofill to read available resumes, prepare relevant work samples, fill the application, and save a verified draft without submitting / 使用 $student-resume-autofill 读取现有简历、准备作品附件、填写网申并保存已核验的草稿，未经确认不提交。"

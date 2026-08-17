@@ -1,0 +1,37 @@
+{
+  "profile_version": "1.0",
+  "updated_at": "<YYYY-MM-DD>",
+  "identity": {
+    "name": "<FULL_NAME>",
+    "government_id": "<GOVERNMENT_ID>",
+    "birth_date": "<YYYY-MM-DD>"
+  },
+  "contact": {
+    "phone": "<PHONE>",
+    "email": "<EMAIL>",
+    "address": "<ADDRESS>"
+  },
+  "application_preferences": {},
+  "education": [],
+  "experience": [],
+  "projects": [],
+  "research_and_publications": [],
+  "portfolio_assets": [],
+  "repositories": [],
+  "awards": [],
+  "certificates": [],
+  "skills": [],
+  "languages": [],
+  "activities": [],
+  "family": [],
+  "connections": {
+    "github_connector_available": false
+  },
+  "source_ledger": [],
+  "conflicts": [],
+  "placeholders": [],
+  "privacy": {
+    "contains_sensitive_data": false,
+    "sharing_allowed": false
+  }
+}
