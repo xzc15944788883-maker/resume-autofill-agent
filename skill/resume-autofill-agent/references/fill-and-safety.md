@@ -11,6 +11,8 @@
 | Declaration | truth statement, relatives, conflicts | Require user review; never infer. |
 | Irreversible action | submit, sign, consent, withdraw | Require explicit confirmation immediately before action. |
 
+For grades, GPA, rank, and transcripts, apply data minimization: leave optional fields blank and do not upload proof unless the form explicitly requires it, the application process genuinely needs it, or the user asks. If GPA is required, use only the verified value. If rank is required but unknown, choose only a truthful option such as `unknown`, `not applicable`, or `other`; never derive a rank from GPA or invent a percentile.
+
 ## Role-Aware Supplementation
 
 Score candidate material by relevance, evidence strength, recency, and distinctiveness. Prefer strong recent evidence. Use older evidence only to fill a real gap. Derive skill labels only from demonstrated work, and keep causal or quantitative claims exactly within the evidence.
@@ -45,7 +47,7 @@ If an upload erases work, recover from the source ledger rather than relying on 
 6. Compress or transcode only a delivery copy. Verify that media plays, archive paths are clean, and important text remains legible.
 7. Upload once, wait for completion, and verify the displayed filename. Record the application, field, source file, delivery copy, and upload result.
 
-Do not attach family documents, transcripts, IDs, raw chat exports, credentials, `.git` metadata, environment files, or unrelated source material in a portfolio archive. Avoid filenames or media metadata containing private contact information unless necessary.
+Do not attach family documents, transcripts, IDs, raw chat exports, credentials, `.git` metadata, environment files, or unrelated source material in a portfolio archive. Do not upload Chinese, English, or bilingual transcripts unless explicitly required or requested. Avoid filenames or media metadata containing private contact information unless necessary.
 
 ## Repeated Sections
 
