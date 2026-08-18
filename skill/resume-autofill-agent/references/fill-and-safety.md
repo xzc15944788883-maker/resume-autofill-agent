@@ -17,6 +17,8 @@ For grades, GPA, rank, and transcripts, apply data minimization: leave optional 
 
 Score candidate material by relevance, evidence strength, recency, and distinctiveness. Prefer strong recent evidence. Use older evidence only to fill a real gap. Derive skill labels only from demonstrated work, and keep causal or quantitative claims exactly within the evidence.
 
+Apply lawful and truthful strength-first selection instead of trying to fill every optional field. Prioritize evidence that improves role fit; omit optional, weak, duplicative, outdated, or unnecessarily sensitive material when omission is allowed. Never omit required facts or evade declarations. Keep a short decision note for every material inclusion or omission, stating the field, action, and reason so the user can review the tradeoff.
+
 A good rewrite preserves all four boundaries:
 
 1. same actor and scope;
